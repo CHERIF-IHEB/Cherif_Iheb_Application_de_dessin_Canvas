@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="prjdev.css" />
+    <title>Dessin Canvas</title>
+  </head>
+  <body>
+    <header>
+      <div class="tache">
+        <button id="btnPinceau">Pinceau</button>
+        <button id="btnGomme">Gomme</button>
+      </div>
+      <div class="config">
+        <span id="palettecouleur">
+          <label for="colorPicker">Couleur</label>
+          <input type="color" id="colorPicker" value="#e94560" />
+        </span>
+        <span id="epaisseur">
+          <label for="epSlider">Taille</label>
+          <input type="range" id="epSlider" min="1" max="60" value="6" />
+          <span id="epVal">6</span>
+        </span>
+      </div>
+      <div class="menu">
+        <button id="btnEffacer">Effacer</button>
+        <button id="btnSauvegarder">Sauvgarder</button>
+        <button id="btnImporter">Importer</button>
+      </div>
+    </header>
+    <main>
+      <section id="s1"></section>
+      <section id="s2"><canvas id="canv"></canvas></section>
+    </main>
+    <footer>
+      <span id="statusTool">Outil : Pinceau</span>
+      <span id="statusSize">Taille : 6px</span>
+      <span id="statusPos">X: 0 Y: 0</span>
+
+      <script src="evenementpd.js"></script>
+    </footer>
+  </body>
+</html>
