@@ -27,7 +27,7 @@ et même importer une photo pour dessiner par-dessus.
 - Barre de statut : affiche l'outil actif, la taille et les coordonnées
   XY de la souris en temps réel
 # Rendu final — GitHub Pages
-[Voila ma page web]( LIEN_GITHUB_PAGES_ICI )
+[Voila ma page web](https://cherif-iheb.github.io/Cherif_Iheb_Application_de_dessin_Canvas/)
 # Nouveautés explorées
 Durant ce projet, plusieurs notions ont été découvertes et bien maîtrisées :
 
