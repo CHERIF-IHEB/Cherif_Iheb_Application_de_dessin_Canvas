@@ -14,20 +14,33 @@
         <button id="btnGomme">Gomme</button>
       </div>
       <div class="config">
+        <! palettecouleur>
         <span id="palettecouleur">
           <label for="colorPicker">Couleur</label>
           <input type="color" id="colorPicker" value="#e94560" />
         </span>
+        <! epaisseur>
         <span id="epaisseur">
           <label for="epSlider">Taille</label>
           <input type="range" id="epSlider" min="1" max="60" value="6" />
           <span id="epVal">6</span>
+        </span>
+        <! Formes>
+        <span class="formpicker">
+          <label for="formSelect">Forme</label>
+          <select id="formSelect">
+            <option value="libre">Libre</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="cercle">Cercle</option>
+            <option value="triangle">Triangle</option>
+          </select>
         </span>
       </div>
       <div class="menu">
         <button id="btnEffacer">Effacer</button>
         <button id="btnSauvegarder">Sauvgarder</button>
         <button id="btnImporter">Importer</button>
+        <input type="file" id="fileInput" accept="image/*" />
       </div>
     </header>
     <main>

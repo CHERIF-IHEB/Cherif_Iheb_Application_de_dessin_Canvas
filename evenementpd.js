@@ -4,6 +4,7 @@ var contexte = canvas.getContext("2d");
 var epSlider = document.getElementById("epSlider");
 var epVal = document.getElementById("epVal");
 var colorPicker = document.getElementById("colorPicker");
+var formSelect = document.getElementById("formSelect");
 var btnPinceau = document.getElementById("btnPinceau");
 var btnGomme = document.getElementById("btnGomme");
 var btnEffacer = document.getElementById("btnEffacer");
@@ -11,6 +12,8 @@ var btnSauvegarder = document.getElementById("btnSauvegarder");
 var statusTool = document.getElementById("statusTool");
 var statusSize = document.getElementById("statusSize");
 var statusPos = document.getElementById("statusPos");
+var btnImporter = document.getElementById("btnImporter");
+var fileInput = document.getElementById("fileInput");
 
 //ADAPTER LA TAILLE DU CANVAS A LA SECTION s2
 var section = document.getElementById("s2");
@@ -65,38 +68,109 @@ btnSauvegarder.addEventListener("click", function () {
   lien.click();
 });
 
-//DEBUT DU DESSIN (clic enfoncé)
-canvas.addEventListener("mousedown", function (e) {
-  enTrainDeDessiner = true;
-  contexte.beginPath();
-  contexte.moveTo(e.offsetX, e.offsetY);
+//BOUTON IMPORTER UNE PHOTO
+// Le bouton déclenche le input file caché
+btnImporter.addEventListener("click", function () {
+  fileInput.click();
+});
+// Quand l'utilisateur choisit une image depuis son ordinateur
+fileInput.addEventListener("change", function () {
+  var fichier = fileInput.files[0]; // récupérer le fichier choisi
+  if (!fichier) return;
+
+  var reader = new FileReader(); // lire le fichier localement
+
+  reader.onload = function (e) {
+    var img = new Image();
+    img.src = e.target.result; // données de l'image en base64
+
+    img.onload = function () {
+      // Effacer le canvas puis dessiner l'image dessus
+      contexte.clearRect(0, 0, canvas.width, canvas.height);
+      contexte.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+  };
+  reader.readAsDataURL(fichier); // lire l'image comme URL base64
+  fileInput.value = ""; // réinitialiser pour pouvoir importer à nouveau
 });
 
-//DESSIN EN COURS (souris qui bouge)
-canvas.addEventListener("mousemove", function (e) {
-  // mettre à jour les coordonnées dans le footer
-  statusPos.textContent = "X: " + e.offsetX + "  Y: " + e.offsetY;
-
-  if (!enTrainDeDessiner) return;
-
-  if (outil === "gomme") {
-    // gomme : effacer
-    contexte.globalCompositeOperation = "destination-out";
-    contexte.strokeStyle = "rgba(0,0,0,1)";
-  } else {
-    // pinceau : dessiner
-    contexte.globalCompositeOperation = "source-over";
-    contexte.strokeStyle = colorPicker.value;
-  }
-
+//CHANGEMENT DE FORME
+formSelect.addEventListener("change", function () {
+  outil = formSelect.value; // 'libre', 'rectangle', 'cercle', 'triangle'
+  statusTool.textContent = "Outil : " + formSelect.value;
+});
+//appliquer le style du contexte
+function appliquerStyle() {
   contexte.lineWidth = epSlider.value;
   contexte.lineCap = "round";
   contexte.lineJoin = "round";
+  if (outil === "gomme") {
+    contexte.globalCompositeOperation = "destination-out";
+    contexte.strokeStyle = "rgba(0,0,0,1)";
+  } else {
+    contexte.globalCompositeOperation = "source-over";
+    contexte.strokeStyle = colorPicker.value;
+    contexte.fillStyle = colorPicker.value;
+  }
+}
 
-  contexte.lineTo(e.offsetX, e.offsetY);
-  contexte.stroke();
-  contexte.beginPath();
-  contexte.moveTo(e.offsetX, e.offsetY);
+//DEBUT DU DESSIN (clic enfoncé)
+var debutX = 0;
+var debutY = 0;
+var snapshotAvantForme = null;
+
+canvas.addEventListener("mousedown", function (e) {
+  enTrainDeDessiner = true;
+  debutX = e.offsetX;
+  debutY = e.offsetY;
+
+  if (outil === "libre" || outil === "pinceau" || outil === "gomme") {
+    contexte.beginPath();
+    contexte.moveTo(debutX, debutY);
+  } else {
+    // sauvegarder le canvas avant de dessiner la forme
+    snapshotAvantForme = contexte.getImageData(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+  }
+});
+//DESSIN EN COURS (souris qui bouge)
+canvas.addEventListener("mousemove", function (e) {
+  statusPos.textContent = "X: " + e.offsetX + "  Y: " + e.offsetY;
+  if (!enTrainDeDessiner) return;
+
+  var x = e.offsetX;
+  var y = e.offsetY;
+
+  appliquerStyle();
+
+  if (outil === "libre" || outil === "pinceau" || outil === "gomme") {
+    contexte.lineTo(x, y);
+    contexte.stroke();
+    contexte.beginPath();
+    contexte.moveTo(x, y);
+  } else if (outil === "rectangle") {
+    contexte.putImageData(snapshotAvantForme, 0, 0);
+    contexte.beginPath();
+    contexte.strokeRect(debutX, debutY, x - debutX, y - debutY);
+  } else if (outil === "cercle") {
+    contexte.putImageData(snapshotAvantForme, 0, 0);
+    var rayon = Math.sqrt(Math.pow(x - debutX, 2) + Math.pow(y - debutY, 2));
+    contexte.beginPath();
+    contexte.arc(debutX, debutY, rayon, 0, 2 * Math.PI);
+    contexte.stroke();
+  } else if (outil === "triangle") {
+    contexte.putImageData(snapshotAvantForme, 0, 0);
+    contexte.beginPath();
+    contexte.moveTo(debutX, debutY);
+    contexte.lineTo(x, y);
+    contexte.lineTo(debutX - (x - debutX), y);
+    contexte.closePath();
+    contexte.stroke();
+  }
 });
 
 //FIN DU DESSIN
