@@ -118,9 +118,13 @@ function appliquerStyle() {
 var debutX = 0;
 var debutY = 0;
 var snapshotAvantForme = null;
+var dernierEtat = null;
+var dernierX = 0;
+var dernierY = 0;
 
 canvas.addEventListener("mousedown", function (e) {
   enTrainDeDessiner = true;
+  dernierEtat = contexte.getImageData(0, 0, canvas.width, canvas.height);
   debutX = e.offsetX;
   debutY = e.offsetY;
 
@@ -140,6 +144,8 @@ canvas.addEventListener("mousedown", function (e) {
 //DESSIN EN COURS (souris qui bouge)
 canvas.addEventListener("mousemove", function (e) {
   statusPos.textContent = "X: " + e.offsetX + "  Y: " + e.offsetY;
+  dernierX = e.offsetX;
+  dernierY = e.offsetY;
   if (!enTrainDeDessiner) return;
 
   var x = e.offsetX;
@@ -172,10 +178,100 @@ canvas.addEventListener("mousemove", function (e) {
     contexte.stroke();
   }
 });
+//RACCOURCIS CLAVIER
+document.addEventListener("keydown", function (e) {
+  // Ne pas déclencher si l'utilisateur tape dans un champ input
+  if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+
+  switch (e.key.toLowerCase()) {
+    // B → Pinceau
+    case "b":
+      outil = "pinceau";
+      formSelect.value = "libre";
+      statusTool.textContent = "Outil : Pinceau";
+      btnPinceau.style.outline = "2px solid white";
+      btnGomme.style.outline = "none";
+      break;
+
+    // E → Gomme
+    case "e":
+      outil = "gomme";
+      statusTool.textContent = "Outil : Gomme";
+      btnGomme.style.outline = "2px solid white";
+      btnPinceau.style.outline = "none";
+      break;
+
+    // S → Sauvegarder
+    case "s":
+      btnSauvegarder.click();
+      break;
+
+    // Suppr ou Backspace → Effacer tout
+    case "delete":
+    case "backspace":
+      contexte.clearRect(0, 0, canvas.width, canvas.height);
+      break;
+
+    // + → Augmenter taille
+    case "+":
+    case "=":
+      epSlider.value = Math.min(60, parseInt(epSlider.value) + 2);
+      epVal.textContent = epSlider.value;
+      statusSize.textContent = "Taille : " + epSlider.value + "px";
+      break;
+
+    // - → Diminuer taille
+    case "-":
+      epSlider.value = Math.max(1, parseInt(epSlider.value) - 2);
+      epVal.textContent = epSlider.value;
+      statusSize.textContent = "Taille : " + epSlider.value + "px";
+      break;
+    case "z": // retour etape precedente cntrl Z
+      if (e.ctrlKey && dernierEtat) {
+        contexte.putImageData(dernierEtat, 0, 0);
+      }
+      break;
+  }
+});
 
 //FIN DU DESSIN
 canvas.addEventListener("mouseup", function () {
   enTrainDeDessiner = false;
+
+  var remplir = document.getElementById("remplir").checked;
+
+  // Remplir seulement pour les formes géométriques
+  if (outil === "rectangle") {
+    if (remplir) {
+      contexte.fillRect(debutX, debutY, canvas.width, canvas.height);
+    }
+  }
+
+  // la forme en fill au mouseup
+  if (remplir && snapshotAvantForme) {
+    contexte.putImageData(snapshotAvantForme, 0, 0);
+    appliquerStyle();
+
+    if (outil === "rectangle") {
+      contexte.beginPath();
+      contexte.fillRect(debutX, debutY, dernierX - debutX, dernierY - debutY);
+    } else if (outil === "cercle") {
+      var rayon = Math.sqrt(
+        Math.pow(dernierX - debutX, 2) + Math.pow(dernierY - debutY, 2)
+      );
+      contexte.beginPath();
+      contexte.arc(debutX, debutY, rayon, 0, 2 * Math.PI);
+      contexte.fill();
+    } else if (outil === "triangle") {
+      contexte.beginPath();
+      contexte.moveTo(debutX, debutY);
+      contexte.lineTo(dernierX, dernierY);
+      contexte.lineTo(debutX - (dernierX - debutX), dernierY);
+      contexte.closePath();
+      contexte.fill();
+    }
+  }
+
   contexte.beginPath();
 });
 

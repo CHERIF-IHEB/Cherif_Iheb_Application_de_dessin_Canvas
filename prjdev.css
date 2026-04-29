@@ -11,9 +11,23 @@ header {
 }
 /* gauche header */
 .tache {
-  float: inline-start;
-  border-right: 1.5px solid #444;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding-right: 20px;
+  border-right: 1.5px solid #444444;
+}
+
+/* milieu header */
+.config {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex: 1;
+  padding: 0 20px;
+  border-right: 1.5px solid #444444;
+  color: gold;
 }
 /*milieu header*/
 .menu {
@@ -22,6 +36,39 @@ header {
   align-items: center;
   gap: 8px;
   padding-left: 20px;
+}
+/*Checkbox Remplir */
+#remplir {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #444444;
+  border-radius: 4px;
+  background-color: #1a1a2e;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+/* Groupe Remplir */
+.remplirpicker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.remplirpicker label {
+  font-size: 0.8rem;
+  color: #8892b0;
+  white-space: nowrap;
+}
+
+#remplir:checked {
+  background-color: goldenrod;
+  border-color: goldenrod;
+}
+
+#remplir:hover {
+  border-color: goldenrod;
 }
 #fileInput {
   display: none;

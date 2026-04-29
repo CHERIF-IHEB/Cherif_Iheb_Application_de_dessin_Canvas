@@ -14,18 +14,18 @@
         <button id="btnGomme">Gomme</button>
       </div>
       <div class="config">
-        <! palettecouleur>
+        <!-- palettecouleur -->
         <span id="palettecouleur">
           <label for="colorPicker">Couleur</label>
           <input type="color" id="colorPicker" value="#e94560" />
         </span>
-        <! epaisseur>
+        <!-- epaisseur -->
         <span id="epaisseur">
           <label for="epSlider">Taille</label>
           <input type="range" id="epSlider" min="1" max="60" value="6" />
           <span id="epVal">6</span>
         </span>
-        <! Formes>
+        <!-- Formes -->
         <span class="formpicker">
           <label for="formSelect">Forme</label>
           <select id="formSelect">
@@ -34,6 +34,11 @@
             <option value="cercle">Cercle</option>
             <option value="triangle">Triangle</option>
           </select>
+        </span>
+        <!-- Remplir -->
+        <span class="remplirpicker">
+          <label for="remplir">Remplir</label>
+          <input type="checkbox" id="remplir" />
         </span>
       </div>
       <div class="menu">
@@ -51,6 +56,10 @@
       <span id="statusTool">Outil : Pinceau</span>
       <span id="statusSize">Taille : 6px</span>
       <span id="statusPos">X: 0 Y: 0</span>
+      <span style="margin-left: auto; color: #555">
+        B=Pinceau · E=Gomme · S=Sauvegarder · Suppr=Effacer · +=Taille+ ·
+        -=Taille-
+      </span>
 
       <script src="evenementpd.js"></script>
     </footer>
